@@ -19,9 +19,10 @@
         html, body { margin:0; padding:0; width: 100%; height: 100%; position: fixed; top: 0; left: 0; overflow: hidden; background:var(--vica-blue); color:var(--vica-gold); font-family: 'Georgia', 'Times New Roman', serif; overscroll-behavior: none; }
         .hidden { display: none !important; }
 
+        /* Portrait Mode Lock - ONLY on small devices (phones) */
         #rotateOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 20000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; }
         #rotateOverlay h2 { color: var(--vica-gold); margin-top: 20px; font-family: sans-serif; }
-        @media screen and (orientation: landscape) {
+        @media screen and (orientation: landscape) and (max-width: 900px) {
             #rotateOverlay { display: flex; }
         }
 
@@ -145,7 +146,7 @@
 
     <script>
         // --- LIVE VIRGINIA LIS API SETTINGS ---
-        const LIS_API_KEY = "DD52A887-4E99-42B5-B9FA-6E9F76010272"; // DD52A887-4E99-42B5-B9FA-6E9F76010272
+        const LIS_API_KEY = "YOUR_LIS_API_KEY_HERE"; // PASTE YOUR KEY HERE
         const LIS_API_BASE_URL = "https://law.lis.virginia.gov/api"; 
 
         // --- LOCAL FALLBACK DATABASE ---
@@ -247,8 +248,6 @@
                 if (response.ok) {
                     let data = await response.json();
                     
-                    // The LIS API returns complex legal text. We parse the most important parts.
-                    // Depending on the exact JSON structure, we might need to adjust these fields.
                     let title = data.catchline || data.title || data.heading || "Unknown Title";
                     let fullText = data.text || data.full_text || data.content || "No text available.";
                     let url = data.url || `https://law.lis.virginia.gov/vacodefull/title${section.split('-')[0]}/section${section}/`;
@@ -275,18 +274,15 @@
                 if (response.ok) {
                     let data = await response.json();
                     
-                    // Assuming the API returns a list of results. We take the first one.
                     if (data && data.results && data.results.length > 0) {
                         let firstResult = data.results[0];
                         let section = firstResult.section_number || firstResult.section || "Unknown Section";
                         let title = firstResult.catchline || firstResult.title || firstResult.name || "Unknown Title";
                         let url = firstResult.url || "#";
                         
-                        // Now that we have the section number, fetch the full details
                         await fetchLiveSection(section, query);
                         return;
                     } else if (data && data.section) {
-                        // Sometimes the API returns a single object instead of a list
                         let section = data.section;
                         let title = data.catchline || data.title || "Unknown Title";
                         let url = data.url || "#";
@@ -298,7 +294,6 @@
                 console.log("Live API unavailable. Falling back to Local Database...");
             }
             
-            // Fallback to local if API fails
             searchLocalDatabase(query);
         }
 
@@ -352,7 +347,6 @@
             
             document.getElementById('aiResponse').innerHTML = html;
             
-            // Read the Section and Title out loud
             let speechText = `Code ${section}. ${title}.`;
             speakText(speechText);
         }
@@ -369,4 +363,3 @@
     </script>
 </body>
 </html>
-
