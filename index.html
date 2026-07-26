@@ -44,9 +44,8 @@
         .logo-divider { width: 120px; height: 4px; background: linear-gradient(to right, transparent, var(--vica-gold), transparent); margin: 20px auto; }
         
         .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 500px; }
-        /* FIX: Solid gold color for buttons so text and emojis are always visible */
         .category-btn { 
-            color: var(--vica-gold); /* Solid Gold Text */
+            color: var(--vica-gold); 
             background: linear-gradient(135deg, var(--vica-blue) 0%, var(--vica-blue-light) 100%); 
             border: 2px solid var(--vica-gold); 
             padding: 25px 10px; font-size: 18px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border-radius: 8px; touch-action: manipulation; box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; gap: 10px; 
@@ -74,7 +73,6 @@
         .response-code { font-size: 36px; font-weight: bold; margin-bottom: 15px; font-family: 'Georgia', serif; }
         .response-title { font-size: 22px; color: white; margin-bottom: 15px; font-family: sans-serif; }
         .response-class { font-size: 18px; color: #ff4d4d; font-weight: bold; margin-top: 15px; padding: 10px 15px; background: rgba(255, 77, 77, 0.1); display: inline-block; border: 1px solid #ff4d4d; border-radius: 4px; font-family: sans-serif; }
-        .full-text-link { display: block; margin-top: 20px; color: var(--vica-gold); text-decoration: underline; font-size: 14px; font-family: sans-serif; }
 
         .controls { height: 140px; background: var(--vica-blue); border-top: 2px solid var(--vica-gold); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         
@@ -89,10 +87,7 @@
 </head>
 <body>
 
-    <div id="rotateOverlay">
-        📱<br><h2>Please rotate your device<br>to Portrait Mode</h2>
-    </div>
-
+    <div id="rotateOverlay">📱<br><h2>Please rotate your device<br>to Portrait Mode</h2></div>
     <div class="rope-border"></div>
 
     <!-- 1. LANDING PAGE -->
@@ -108,12 +103,7 @@
             <button class="category-btn" onclick="enterApp('Game & Fish')"><span>🎣</span>Game & Fish</button>
             <button class="category-btn" onclick="enterApp('J&DR')"><span>👨‍👩‍👧</span>Juvenile / Dom</button>
         </div>
-        
-        <div class="creator-credit gold-text">
-            EARL WOOD<br>
-            DEPUTY SHERIFF RETIRED<br>
-            VIRGINIA
-        </div>
+        <div class="creator-credit gold-text">EARL WOOD<br>DEPUTY SHERIFF RETIRED<br>VIRGINIA</div>
     </div>
 
     <!-- 2. MAIN APP -->
@@ -132,11 +122,10 @@
                 <h3 class="gold-text">Officer Query:</h3>
                 <div class="transcript-text" id="userQuery">Tap the microphone below and speak your query...</div>
             </div>
-            
             <div class="response-box">
-                <h3 class="gold-text">LIS Database Response:</h3>
+                <h3 class="gold-text">Database Response:</h3>
                 <div class="response-text" id="aiResponse">
-                    <p style="color:#888; text-align: center; margin-top: 40px;">Awaiting Voice Command...<br><br>(e.g., "What is the code for concealed weapon?" or "What is 18.2-308?")</p>
+                    <p style="color:#888; text-align: center; margin-top: 40px;">Awaiting Voice Command...<br><br>(e.g., "What is the code for capital murder?" or "What is 18.2-31?")</p>
                 </div>
             </div>
         </div>
@@ -150,22 +139,63 @@
     </div>
 
     <script>
-        // --- LIVE VIRGINIA LIS API SETTINGS ---
-        const LIS_API_KEY = "YOUR_LIS_API_KEY_HERE"; // PASTE YOUR KEY HERE
-        const LIS_API_BASE_URL = "https://law.lis.virginia.gov/api"; 
-
-        // --- LOCAL FALLBACK DATABASE ---
+        // --- EXPANDED VIRGINIA CODE DATABASE ---
         const localCodes = [
-            { section: "18.2-308", title: "Carrying concealed weapons; exceptions", class: "Class 6 Felony", keywords: ["concealed", "weapon", "gun", "firearm"] },
-            { section: "18.2-95", title: "Grand larceny defined", class: "Class 6 Felony", keywords: ["grand", "larceny", "theft"] },
-            { section: "18.2-96", title: "Petit larceny defined", class: "Class 1 Misdemeanor", keywords: ["petit", "petty", "larceny", "theft"] },
-            { section: "46.2-300", title: "Driving without a license", class: "Class 2 Misdemeanor", keywords: ["driving", "license", "no license"] },
-            { section: "46.2-862", title: "Reckless driving; excessive speed", class: "Class 1 Misdemeanor", keywords: ["reckless", "speed", "speeding"] },
-            { section: "18.2-250", title: "Possession of controlled substances", class: "Class 5 Felony", keywords: ["drugs", "narcotics", "controlled", "substance"] },
-            { section: "18.2-57.2", title: "Assault and battery against a family or household member", class: "Class 1 Misdemeanor", keywords: ["assault", "battery", "domestic", "family"] },
-            { section: "18.2-460", title: "Obstructing justice; resisting arrest", class: "Class 1 Misdemeanor", keywords: ["obstructing", "resisting", "justice", "arrest"] },
-            { section: "46.2-894", title: "DUI; driving under the influence of alcohol or drugs", class: "Class 1 Misdemeanor", keywords: ["dui", "drunk", "alcohol", "intoxicated"] },
-            { section: "18.2-138", title: "Trespassing upon posted property", class: "Class 1 Misdemeanor", keywords: ["trespass", "trespassing", "posted"] }
+            // Criminal
+            { section: "18.2-31", title: "Capital Murder", class: "Class 1 Felony", keywords: ["capital", "murder", "kill", "death"] },
+            { section: "18.2-32", title: "First Degree Murder", class: "Class 1 Felony", keywords: ["first", "murder", "kill", "death"] },
+            { section: "18.2-32.01", title: "Second Degree Murder", class: "Class 2 Felony", keywords: ["second", "murder", "kill"] },
+            { section: "18.2-57", title: "Assault and Battery", class: "Class 1 Misdemeanor", keywords: ["assault", "battery", "fight", "hit"] },
+            { section: "18.2-57.2", title: "Assault and Battery against Family Member", class: "Class 1 Misdemeanor", keywords: ["assault", "battery", "domestic", "family", "wife", "husband"] },
+            { section: "18.2-89", title: "Burglary (Nighttime)", class: "Class 3 Felony", keywords: ["burglary", "breaking", "entering", "night"] },
+            { section: "18.2-90", title: "Burglary (Daytime)", class: "Class 3 Felony", keywords: ["burglary", "breaking", "entering", "day"] },
+            { section: "18.2-91", title: "Burglary with Intent to Commit Larceny", class: "Class 3 Felony", keywords: ["burglary", "larceny", "steal"] },
+            { section: "18.2-95", title: "Grand Larceny", class: "Class 6 Felony", keywords: ["grand", "larceny", "theft", "steal"] },
+            { section: "18.2-96", title: "Petit Larceny", class: "Class 1 Misdemeanor", keywords: ["petit", "petty", "larceny", "theft", "steal", "shoplift"] },
+            { section: "18.2-103", title: "Concealment/Shoplifting", class: "Class 1 Misdemeanor", keywords: ["shoplifting", "conceal", "steal", "store"] },
+            { section: "18.2-108", title: "Receiving Stolen Property", class: "Class 6 Felony", keywords: ["receiving", "stolen", "property"] },
+            { section: "18.2-138", title: "Trespassing on Posted Property", class: "Class 1 Misdemeanor", keywords: ["trespass", "trespassing", "posted", "no trespassing"] },
+            { section: "18.2-152.4", title: "Computer Trespass", class: "Class 6 Felony", keywords: ["computer", "trespass", "hacking"] },
+            { section: "18.2-152.12", title: "Identity Theft", class: "Class 6 Felony", keywords: ["identity", "theft", "fraud"] },
+            { section: "18.2-195", title: "Credit Card Theft", class: "Class 6 Felony", keywords: ["credit", "card", "theft"] },
+            { section: "18.2-250", title: "Possession of Controlled Substance", class: "Class 5 Felony", keywords: ["drugs", "narcotics", "controlled", "substance", "possession"] },
+            { section: "18.2-248.1", title: "Distribution of Drugs", class: "Class 5 Felony", keywords: ["drugs", "distribute", "sell", "narcotics"] },
+            { section: "18.2-308", title: "Carrying Concealed Weapon", class: "Class 6 Felony", keywords: ["concealed", "weapon", "gun", "firearm"] },
+            { section: "18.2-308.1", title: "Possession of Firearm by Convicted Felon", class: "Class 6 Felony", keywords: ["felon", "firearm", "gun", "possession"] },
+            { section: "18.2-460", title: "Obstructing Justice / Resisting Arrest", class: "Class 1 Misdemeanor", keywords: ["obstructing", "resisting", "justice", "arrest"] },
+            { section: "18.2-460", title: "Obstructing Justice", class: "Class 1 Misdemeanor", keywords: ["obstruct", "justice"] },
+            { section: "18.2-47", title: "Abduction / Kidnapping", class: "Class 5 Felony", keywords: ["abduction", "kidnapping", "kidnap"] },
+            { section: "18.2-61", title: "Rape", class: "Class 1 Felony", keywords: ["rape", "sexual", "assault"] },
+            { section: "18.2-67.4", title: "Sexual Battery", class: "Class 1 Misdemeanor", keywords: ["sexual", "battery"] },
+            { section: "18.2-67.5", title: "Aggravated Sexual Battery", class: "Class 6 Felony", keywords: ["aggravated", "sexual", "battery"] },
+            { section: "18.2-374.1", title: "Taking Indecent Liberties with Child", class: "Class 5 Felony", keywords: ["indecent", "liberties", "child", "minor"] },
+            { section: "18.2-374.4", title: "Child Pornography", class: "Class 5 Felony", keywords: ["child", "pornography", "explicit"] },
+
+            // Traffic
+            { section: "46.2-300", title: "Driving Without a License", class: "Class 2 Misdemeanor", keywords: ["driving", "without", "license", "no license", "unlicensed"] },
+            { section: "46.2-300.1", title: "Driving on Suspended/Revoked License", class: "Class 1 Misdemeanor", keywords: ["driving", "suspended", "revoked", "license"] },
+            { section: "46.2-301", title: "Driving While License Suspended", class: "Class 1 Misdemeanor", keywords: ["driving", "suspended", "license"] },
+            { section: "46.2-862", title: "Reckless Driving by Speed", class: "Class 1 Misdemeanor", keywords: ["reckless", "speed", "speeding"] },
+            { section: "46.2-852", title: "Reckless Driving (General)", class: "Class 1 Misdemeanor", keywords: ["reckless", "driving"] },
+            { section: "46.2-868", title: "Reckless Driving (General Penalty)", class: "Class 1 Misdemeanor", keywords: ["reckless", "driving"] },
+            { section: "46.2-894", title: "DUI (Alcohol or Drugs)", class: "Class 1 Misdemeanor", keywords: ["dui", "drunk", "alcohol", "intoxicated", "driving"] },
+            { section: "46.2-341.24", title: "DUI Commercial Vehicle", class: "Class 1 Misdemeanor", keywords: ["dui", "commercial"] },
+            { section: "46.2-920", title: "Failure to Yield to Emergency Vehicle", class: "Class 1 Misdemeanor", keywords: ["failure", "yield", "emergency", "vehicle", "police"] },
+            { section: "46.2-100", title: "Definition of Motor Vehicle", class: "Info Only", keywords: ["motor", "vehicle", "definition"] },
+            
+            // Game & Fish
+            { section: "29.1-301", title: "Hunting Without a License", class: "Class 3 Misdemeanor", keywords: ["hunting", "without", "license", "no license"] },
+            { section: "29.1-317", title: "Fishing Without a License", class: "Class 3 Misdemeanor", keywords: ["fishing", "without", "license", "no license"] },
+            { section: "29.1-501", title: "Hunting Out of Season", class: "Class 3 Misdemeanor", keywords: ["hunting", "season", "out of season"] },
+            { section: "29.1-521", title: "Spotlighting Deer", class: "Class 3 Misdemeanor", keywords: ["spotlight", "deer", "hunting"] },
+            { section: "29.1-553", title: "Trespass to Hunt/Fish", class: "Class 3 Misdemeanor", keywords: ["trespass", "hunt", "fish"] },
+            { section: "29.1-738", title: "Boating Under the Influence (BUI)", class: "Class 1 Misdemeanor", keywords: ["boating", "bui", "dui", "alcohol"] },
+            
+            // Juvenile & Domestic Relations
+            { section: "16.1-241", title: "JDR Court Jurisdiction", class: "Info Only", keywords: ["jurisdiction", "juvenile"] },
+            { section: "16.1-278.2", title: "Juvenile Taken into Custody", class: "Info Only", keywords: ["custody", "juvenile", "detain"] },
+            { section: "16.1-278.8", title: "Juvenile Disposition (Felony)", class: "Info Only", keywords: ["disposition", "juvenile", "felony"] },
+            { section: "16.1-279.1", title: "Transfer to Circuit Court (Juvenile)", class: "Info Only", keywords: ["transfer", "circuit", "juvenile"] }
         ];
 
         let recognition = null;
@@ -188,7 +218,7 @@
                 recognition.onresult = function(event) {
                     let transcript = event.results[0][0].transcript;
                     document.getElementById('userQuery').innerText = transcript;
-                    processQuery(transcript);
+                    searchLocalDatabase(transcript);
                 };
 
                 recognition.onerror = function(event) {
@@ -216,7 +246,11 @@
             document.getElementById('micBtn').classList.add('listening');
             document.getElementById('statusText').innerText = "LISTENING...";
             document.getElementById('userQuery').innerText = "Listening...";
-            document.getElementById('aiResponse').innerHTML = '<p style="color:#888;">Searching Live LIS Database...</p>';
+            document.getElementById('aiResponse').innerHTML = '<p style="color:#888;">Searching Database...</p>';
+            
+            // FIX: Prime iOS audio security by speaking a tiny silent prompt
+            speakText(" "); 
+            
             recognition.start();
         }
 
@@ -226,101 +260,42 @@
             document.getElementById('statusText').innerText = "TAP TO SPEAK";
         }
 
-        // --- LIVE API SEARCH LOGIC ---
-        async function processQuery(query) {
-            let lowerQuery = query.toLowerCase();
-            
-            // 1. Check if the officer spoke a code number (e.g., "18.2-308")
-            let codeMatch = lowerQuery.match(/(\d+\.\d+-\d+|\d+-\d+)/);
-            
+        // --- SMART SEARCH LOGIC ---
+        function searchLocalDatabase(query) {
+            let lowerQuery = query.toLowerCase().replace(/[^a-z0-9\s-]/g, '');
+            let foundCode = null;
+            let bestScore = 0;
+
+            // 1. Check for exact code match first
+            let codeMatch = lowerQuery.match(/(\d+\.\d+-\d+|\d+-\d+|\d+\.\d+\.?\d*)/);
             if (codeMatch) {
-                let section = codeMatch[0];
-                await fetchLiveSection(section, query);
-            } else {
-                // 2. If no code, treat as keyword search (e.g., "concealed weapon")
-                await fetchLiveSearch(query);
-            }
-        }
-
-        // Fetches exact section details from Virginia Law Portal
-        async function fetchLiveSection(section, originalQuery) {
-            try {
-                let response = await fetch(`${LIS_API_BASE_URL}/section?section=${section}`, {
-                    method: 'GET',
-                    headers: { 'WebAPIKey': LIS_API_KEY, 'Accept': 'application/json' }
-                });
-
-                if (response.ok) {
-                    let data = await response.json();
-                    
-                    let title = data.catchline || data.title || data.heading || "Unknown Title";
-                    let fullText = data.text || data.full_text || data.content || "No text available.";
-                    let url = data.url || `https://law.lis.virginia.gov/vacodefull/title${section.split('-')[0]}/section${section}/`;
-                    
-                    displayLiveResult(section, title, fullText, url);
+                let codeStr = codeMatch[0];
+                foundCode = localCodes.find(c => c.section.toLowerCase() === codeStr);
+                if (foundCode) {
+                    displayResult(foundCode);
                     return;
                 }
-            } catch (error) {
-                console.log("Live API unavailable. Falling back to Local Database...");
             }
-            
-            // Fallback to local if API fails
-            searchLocalDatabase(originalQuery);
-        }
 
-        // Searches Virginia Law Portal by keyword
-        async function fetchLiveSearch(query) {
-            try {
-                let response = await fetch(`${LIS_API_BASE_URL}/searchcode?query=${encodeURIComponent(query)}`, {
-                    method: 'GET',
-                    headers: { 'WebAPIKey': LIS_API_KEY, 'Accept': 'application/json' }
-                });
-
-                if (response.ok) {
-                    let data = await response.json();
-                    
-                    if (data && data.results && data.results.length > 0) {
-                        let firstResult = data.results[0];
-                        let section = firstResult.section_number || firstResult.section || "Unknown Section";
-                        let title = firstResult.catchline || firstResult.title || firstResult.name || "Unknown Title";
-                        let url = firstResult.url || "#";
-                        
-                        await fetchLiveSection(section, query);
-                        return;
-                    } else if (data && data.section) {
-                        let section = data.section;
-                        let title = data.catchline || data.title || "Unknown Title";
-                        let url = data.url || "#";
-                        displayLiveResult(section, title, "See full text at link.", url);
-                        return;
+            // 2. Keyword Scoring System
+            localCodes.forEach(code => {
+                let score = 0;
+                code.keywords.forEach(keyword => {
+                    if (lowerQuery.includes(keyword)) {
+                        // Give more points for longer keywords (more specific match)
+                        score += keyword.length; 
                     }
-                }
-            } catch (error) {
-                console.log("Live API unavailable. Falling back to Local Database...");
-            }
-            
-            searchLocalDatabase(query);
-        }
-
-        function searchLocalDatabase(query) {
-            let lowerQuery = query.toLowerCase();
-            let foundCode = null;
-
-            let codeMatch = lowerQuery.match(/(\d+\.\d+-\d+|\d+-\d+)/);
-            if (codeMatch) {
-                foundCode = localCodes.find(c => c.section === codeMatch[0].toUpperCase());
-            }
-
-            if (!foundCode) {
-                foundCode = localCodes.find(c => {
-                    return c.keywords.some(keyword => lowerQuery.includes(keyword));
                 });
-            }
+                if (score > bestScore) {
+                    bestScore = score;
+                    foundCode = code;
+                }
+            });
 
-            if (foundCode) {
-                displayResult({ section: foundCode.section, title: foundCode.title, classification: foundCode.class });
+            if (foundCode && bestScore > 0) {
+                displayResult(foundCode);
             } else {
-                document.getElementById('aiResponse').innerHTML = '<p style="color:#ff4d4d;">No matching code found in the local offline database. Please check API connection or try different keywords.</p>';
+                document.getElementById('aiResponse').innerHTML = '<p style="color:#ff4d4d;">No matching code found in the local offline database. Please try different keywords.</p>';
                 speakText("No matching code found.");
             }
         }
@@ -328,7 +303,7 @@
         function displayResult(data) {
             let codeSection = data.section || "Unknown Section";
             let codeTitle = data.title || "Unknown Title";
-            let codeClass = data.classification || data.class || "Classification not listed";
+            let codeClass = data.class || "Classification not listed";
             
             let html = `
                 <div class="response-code gold-text">${codeSection}</div>
@@ -339,20 +314,6 @@
             document.getElementById('aiResponse').innerHTML = html;
             
             let speechText = `Code ${codeSection}. ${codeTitle}. ${codeClass}.`;
-            speakText(speechText);
-        }
-
-        function displayLiveResult(section, title, fullText, url) {
-            let html = `
-                <div class="response-code gold-text">${section}</div>
-                <div class="response-title">${title}</div>
-                <div style="color: #ccc; font-size: 14px; max-height: 200px; overflow-y: auto; border: 1px solid #444; padding: 10px; margin-top: 15px;">${fullText.substring(0, 500)}...</div>
-                <a href="${url}" target="_blank" class="full-text-link">View Full Statute Text on LIS Portal</a>
-            `;
-            
-            document.getElementById('aiResponse').innerHTML = html;
-            
-            let speechText = `Code ${section}. ${title}.`;
             speakText(speechText);
         }
 
@@ -368,3 +329,5 @@
     </script>
 </body>
 </html>
+
+
