@@ -19,7 +19,6 @@
         html, body { margin:0; padding:0; width: 100%; height: 100%; position: fixed; top: 0; left: 0; overflow: hidden; background:var(--vica-blue); color:var(--vica-gold); font-family: 'Georgia', 'Times New Roman', serif; overscroll-behavior: none; }
         .hidden { display: none !important; }
 
-        /* Portrait Mode Lock - ONLY on small devices (phones) */
         #rotateOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 20000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; }
         #rotateOverlay h2 { color: var(--vica-gold); margin-top: 20px; font-family: sans-serif; }
         @media screen and (orientation: landscape) and (max-width: 900px) {
@@ -45,7 +44,13 @@
         .logo-divider { width: 120px; height: 4px; background: linear-gradient(to right, transparent, var(--vica-gold), transparent); margin: 20px auto; }
         
         .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 500px; }
-        .category-btn { background: linear-gradient(135deg, var(--vica-blue) 0%, var(--vica-blue-light) 100%); border: 2px solid var(--vica-gold); padding: 25px 10px; font-size: 18px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border-radius: 8px; touch-action: manipulation; box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        /* FIX: Solid gold color for buttons so text and emojis are always visible */
+        .category-btn { 
+            color: var(--vica-gold); /* Solid Gold Text */
+            background: linear-gradient(135deg, var(--vica-blue) 0%, var(--vica-blue-light) 100%); 
+            border: 2px solid var(--vica-gold); 
+            padding: 25px 10px; font-size: 18px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border-radius: 8px; touch-action: manipulation; box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.5); display: flex; flex-direction: column; align-items: center; gap: 10px; 
+        }
         .category-btn span { font-size: 32px; margin-bottom: 5px; }
 
         .creator-credit { margin-top: 50px; text-align: center; font-size: 14px; letter-spacing: 2px; line-height: 1.6; }
@@ -98,10 +103,10 @@
             <h2 class="gold-text">Virginia Instant Code Assistant</h2>
         </div>
         <div class="category-grid">
-            <button class="category-btn gold-text" onclick="enterApp('Criminal')"><span>⚖️</span>Criminal</button>
-            <button class="category-btn gold-text" onclick="enterApp('Traffic')"><span>🚗</span>Traffic</button>
-            <button class="category-btn gold-text" onclick="enterApp('Game & Fish')"><span>🎣</span>Game & Fish</button>
-            <button class="category-btn gold-text" onclick="enterApp('J&DR')"><span>👨‍👩‍👧</span>Juvenile / Dom</button>
+            <button class="category-btn" onclick="enterApp('Criminal')"><span>⚖️</span>Criminal</button>
+            <button class="category-btn" onclick="enterApp('Traffic')"><span>🚗</span>Traffic</button>
+            <button class="category-btn" onclick="enterApp('Game & Fish')"><span>🎣</span>Game & Fish</button>
+            <button class="category-btn" onclick="enterApp('J&DR')"><span>👨‍👩‍👧</span>Juvenile / Dom</button>
         </div>
         
         <div class="creator-credit gold-text">
