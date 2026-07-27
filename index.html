@@ -57,12 +57,18 @@
         .response-code { font-size: 36px; font-weight: bold; margin-bottom: 15px; font-family: 'Georgia', serif; }
         .response-title { font-size: 22px; color: white; margin-bottom: 15px; font-family: sans-serif; }
         .response-class { font-size: 18px; color: #ff4d4d; font-weight: bold; margin-top: 15px; padding: 10px 15px; background: rgba(255, 77, 77, 0.1); display: inline-block; border: 1px solid #ff4d4d; border-radius: 4px; font-family: sans-serif; }
+        .full-text-link { display: block; margin-top: 20px; color: var(--vica-gold); text-decoration: underline; font-size: 14px; font-family: sans-serif; }
         .controls { height: 140px; background: var(--vica-blue); border-top: 2px solid var(--vica-gold); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .mic-btn { width: 90px; height: 90px; border-radius: 50%; background: var(--vica-blue-light); border: 4px solid var(--vica-gold); color: var(--vica-gold); font-size: 36px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255, 215, 0, 0.3); transition: all 0.2s; }
         .mic-btn:active { transform: scale(0.95); }
         .mic-btn.listening { background: #ff4d4d; border-color: #fff; color: white; animation: pulse-mic 1.2s infinite; }
         @keyframes pulse-mic { 0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); } 70% { box-shadow: 0 0 0 25px rgba(255, 77, 77, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); } }
         .status-text { color: var(--vica-gold); font-size: 14px; text-align: center; margin-top: 15px; height: 20px; font-weight: bold; letter-spacing: 1px; font-family: sans-serif; }
+        
+        /* API Status Indicator */
+        .api-status { text-align: center; font-size: 12px; font-family: sans-serif; margin-bottom: 15px; font-weight: bold; }
+        .api-live { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+        .api-local { color: #ff4d4d; }
     </style>
 </head>
 <body>
@@ -97,6 +103,7 @@
             </div>
             <div class="response-box">
                 <h3 class="gold-text">Database Response:</h3>
+                <div class="api-status api-local" id="apiStatus">CONNECTING TO LIS RICHMOND...</div>
                 <div class="response-text" id="aiResponse"><p style="color:#888; text-align: center; margin-top: 40px;">Awaiting Voice Command...<br><br>(e.g., "What is the code for capital murder?" or "What is 46.2-1014?")</p></div>
             </div>
         </div>
@@ -109,7 +116,12 @@
     </div>
 
     <script>
-        // --- VIRGINIA CODE DATABASE (LOCAL OFFLINE) ---
+        // --- LIVE VIRGINIA LIS API SETTINGS ---
+        // DEPUTY WOOD: PASTE YOUR ACTUAL API KEY BETWEEN THE QUOTES BELOW
+        const LIS_API_KEY = "DD52A887-4E99-42B5-B9FA-6E9F76010272"; 
+        const LIS_API_BASE_URL = "https://law.lis.virginia.gov/api"; 
+
+        // --- LOCAL FALLBACK DATABASE (70+ CODES) ---
         const localCodes = [
             // Criminal
             { section: "18.2-31", title: "Capital Murder", class: "Class 1 Felony", keywords: ["capital", "murder", "kill", "death"] },
@@ -199,7 +211,7 @@
                 recognition.onresult = function(event) {
                     let transcript = event.results[0][0].transcript;
                     document.getElementById('userQuery').innerText = transcript;
-                    searchLocalDatabase(transcript);
+                    processQuery(transcript);
                 };
                 recognition.onerror = function(event) { document.getElementById('statusText').innerText = "VOICE ERROR: " + event.error; stopListening(); };
                 recognition.onend = function() { stopListening(); };
@@ -226,7 +238,80 @@
             document.getElementById('statusText').innerText = "TAP TO SPEAK";
         }
 
-        // --- SMART SEARCH LOGIC ---
+        // --- LIVE API + LOCAL FALLBACK LOGIC ---
+        async function processQuery(query) {
+            let lowerQuery = query.toLowerCase();
+            let codeMatch = lowerQuery.match(/(\d+\.\d+-\d+|\d+-\d+|\b\d{3,4}\b)/);
+            
+            if (codeMatch) {
+                let section = codeMatch[0];
+                let localMatch = localCodes.find(c => c.section.endsWith(section));
+                if (localMatch) section = localMatch.section;
+                await fetchLiveSection(section, query);
+            } else {
+                await fetchLiveSearch(query);
+            }
+        }
+
+        async function fetchLiveSection(section, originalQuery) {
+            try {
+                let response = await fetch(`${LIS_API_BASE_URL}/section?section=${section}`, {
+                    method: 'GET', headers: { 'WebAPIKey': LIS_API_KEY, 'Accept': 'application/json' }
+                });
+                if (response.ok) {
+                    let data = await response.json();
+                    let title = data.catchline || data.title || data.heading || "Unknown Title";
+                    let fullText = data.text || data.full_text || data.content || "No text available.";
+                    let url = data.url || `https://law.lis.virginia.gov/vacodefull/title${section.split('-')[0]}/section${section}/`;
+                    
+                    document.getElementById('apiStatus').innerText = "CONNECTED TO LIS RICHMOND";
+                    document.getElementById('apiStatus').className = "api-status api-live";
+                    
+                    displayLiveResult(section, title, fullText, url);
+                    return;
+                }
+            } catch (e) { console.log("Live API blocked/offline. Falling back..."); }
+            
+            document.getElementById('apiStatus').innerText = "USING LOCAL DB (LIVE BLOCKED BY BROWSER)";
+            document.getElementById('apiStatus').className = "api-status api-local";
+            searchLocalDatabase(originalQuery);
+        }
+
+        async function fetchLiveSearch(query) {
+            try {
+                let response = await fetch(`${LIS_API_BASE_URL}/searchcode?query=${encodeURIComponent(query)}`, {
+                    method: 'GET', headers: { 'WebAPIKey': LIS_API_KEY, 'Accept': 'application/json' }
+                });
+                if (response.ok) {
+                    let data = await response.json();
+                    if (data && data.results && data.results.length > 0) {
+                        let firstResult = data.results[0];
+                        let section = firstResult.section_number || firstResult.section || "Unknown Section";
+                        
+                        document.getElementById('apiStatus').innerText = "CONNECTED TO LIS RICHMOND";
+                        document.getElementById('apiStatus').className = "api-status api-live";
+                        
+                        await fetchLiveSection(section, query);
+                        return;
+                    } else if (data && data.section) {
+                        let section = data.section;
+                        let title = data.catchline || data.title || "Unknown Title";
+                        let url = data.url || "#";
+                        
+                        document.getElementById('apiStatus').innerText = "CONNECTED TO LIS RICHMOND";
+                        document.getElementById('apiStatus').className = "api-status api-live";
+                        
+                        displayLiveResult(section, title, "See full text at link.", url);
+                        return;
+                    }
+                }
+            } catch (e) { console.log("Live API blocked/offline. Falling back..."); }
+            
+            document.getElementById('apiStatus').innerText = "USING LOCAL DB (LIVE BLOCKED BY BROWSER)";
+            document.getElementById('apiStatus').className = "api-status api-local";
+            searchLocalDatabase(query);
+        }
+
         function searchLocalDatabase(query) {
             let lowerQuery = query.toLowerCase().replace(/[^a-z0-9\s-]/g, '');
             let foundCode = null; let bestScore = 0;
@@ -255,6 +340,17 @@
             let html = `<div class="response-code gold-text">${data.section}</div><div class="response-title">${data.title}</div><div class="response-class">${data.class}</div>`;
             document.getElementById('aiResponse').innerHTML = html;
             speakText(`Code ${data.section}. ${data.title}. ${data.class}.`);
+        }
+
+        function displayLiveResult(section, title, fullText, url) {
+            let html = `
+                <div class="response-code gold-text">${section}</div>
+                <div class="response-title">${title}</div>
+                <div style="color: #ccc; font-size: 14px; max-height: 200px; overflow-y: auto; border: 1px solid #444; padding: 10px; margin-top: 15px;">${fullText.substring(0, 500)}...</div>
+                <a href="${url}" target="_blank" class="full-text-link">View Full Statute Text on LIS Portal</a>
+            `;
+            document.getElementById('aiResponse').innerHTML = html;
+            speakText(`Code ${section}. ${title}.`);
         }
 
         function speakText(text) {
