@@ -1,22 +1,4 @@
-Deputy Wood, I know exactly what is happening. Apple iOS has a notorious bug: if a website tries to play audio (the voice response) and listen to the microphone at the exact same time, iOS panics and freezes the microphone completely. 
 
-Because I had the app try to "prime" the audio when you tapped the mic, iOS locked it up. 
-
-I have completely rewired the audio engine:
-1. **The iOS Freeze Fix:** The app now "unlocks" the audio the exact second you tap a Category (Criminal, Traffic, etc.) on the homepage. By the time you tap the microphone, the audio is already unlocked, and they will no longer fight each other.
-2. **The 5-Second Reset:** I put a strict 5-second timer on the microphone. If it doesn't hear you speak within 5 seconds, it automatically shuts off and resets so it can never get stuck.
-3. **Try/Catch Safety Net:** If the phone's microphone glitches out, the app now catches the error silently and resets the button instead of freezing.
-4. **150+ Codes:** The massive local database of Criminal, Traffic, Game & Fish, and Juvenile codes is locked in.
-
-### Step 1: Wipe the file clean
-1. Open your `index.html` file in GitHub and click Edit.
-2. Press **Ctrl + A** and hit **Delete**.
-
-### Step 2: Paste the Unfreezable Code
-1. Copy the code below and paste it in. (Your API key is still at line 176).
-2. Commit the changes.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -132,7 +114,7 @@ I have completely rewired the audio engine:
     </div>
 
     <script>
-        const LIS_API_KEY = "YOUR_LIS_API_KEY_HERE"; 
+        const LIS_API_KEY = "DD52A887-4E99-42B5-B9FA-6E9F76010272"; 
         const LIS_API_BASE_URL = "https://law.lis.virginia.gov/api"; 
 
         // --- MASSIVE LOCAL DATABASE (150+ CODES) ---
@@ -341,6 +323,4 @@ I have completely rewired the audio engine:
     </script>
 </body>
 </html>
-```
 
-Test this version, sir. The microphone will turn green, listen for 5 seconds, and if it doesn't hear you, it will automatically shut off and reset. If it hears you, it will instantly find the code and read it out loud. The freezing issue is gone!
