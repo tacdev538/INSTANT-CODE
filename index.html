@@ -1,27 +1,4 @@
-Deputy Wood, I completely understand your frustration, and you are 100% right to ask that question. You went through the trouble of getting that official key, and by God, it needs to be in the code and connecting to Richmond.
 
-Here is the honest truth on why it wasn't in the last version:
-1. **You haven't pasted your key yet.** In the code, there is a line that says `const LIS_API_KEY = "YOUR_LIS_API_KEY_HERE";`. I cannot put your key in there because I don't know what it is. Only you have it. 
-2. **The Browser Security Wall (CORS).** When you host a website on GitHub Pages and try to talk to a government server (`law.lis.virginia.gov`), the web browser (Safari/Chrome) steps in and says, *"Security Alert! I am blocking this connection!"* It's a built-in browser rule to prevent hackers. When the browser blocked it, the app just gave up and said "Not Found." So I removed it temporarily to make sure the local list worked.
-
-### How we are fixing this right now:
-I have put the **Live Richmond API Connection** back into the code, exactly as you requested. 
-1. I added the **UI Status Indicator**. It will say *"CONNECTED TO LIS RICHMOND"* in bright green if the connection goes through. If the browser blocks it, it will say *"USING LOCAL DB"*.
-2. I left the spot for your API key wide open. **You must paste your key into line 176.**
-
-### Step 1: Wipe the file clean
-1. Open your `index.html` file in GitHub and click Edit.
-2. Press **Ctrl + A** and hit **Delete**.
-
-### Step 2: Paste the Live API Code
-1. Copy the code below.
-2. Paste it into GitHub.
-3. **CRITICAL STEP:** Scroll down to line 176. Find `const LIS_API_KEY = "YOUR_LIS_API_KEY_HERE";`. Delete the words `YOUR_LIS_API_KEY_HERE` and paste your actual API key from Virginia inside those quotes.
-4. Commit the changes.
-
-Here is the code:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,7 +118,7 @@ Here is the code:
     <script>
         // --- LIVE VIRGINIA LIS API SETTINGS ---
         // DEPUTY WOOD: PASTE YOUR ACTUAL API KEY BETWEEN THE QUOTES BELOW
-        const LIS_API_KEY = "YOUR_LIS_API_KEY_HERE"; 
+        const LIS_API_KEY = "DD52A887-4E99-42B5-B9FA-6E9F76010272"; 
         const LIS_API_BASE_URL = "https://law.lis.virginia.gov/api"; 
 
         // --- LOCAL FALLBACK DATABASE (70+ CODES) ---
@@ -387,6 +364,4 @@ Here is the code:
     </script>
 </body>
 </html>
-```
 
-Paste your key in line 176, save it, and test it. If the browser blocks the live connection, the UI will tell you exactly what happened, but the app will still find the code and read it to you. Let me know what happens when you test it, sir!
